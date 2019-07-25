@@ -1,4 +1,4 @@
-# RABC
+# RBAC
 Simple Role-based Access Control library
 
 
