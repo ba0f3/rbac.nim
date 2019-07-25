@@ -7,7 +7,7 @@ type
   ACL[R, S, P] = ref object of RootObj
     children: Table[R, seq[R]]
     roles: Table[R, seq[R]]
-    subjects: Table[R, seq[R]]
+    subjects: Table[S, seq[S]]
 
     allowed: seq[tuple[role: R, perm: P, subject: S]]
     denied: seq[tuple[role: R, perm: P, subject: S]]
@@ -27,7 +27,7 @@ proc addRole*[R](acl: ACL, role: R, parents: seq[R]) =
   acl.roles[role] = parents
   for parent in parents:
     if parent notin acl.roles:
-      raise newException(RoleNotFoundException, "role '" & parent & "' is not defined yet")
+      raise newException(RoleNotFoundException, "role '" & $parent & "' is not defined yet")
     if parent notin acl.children:
       acl.children[parent] = @[role]
     else:
@@ -42,10 +42,10 @@ proc addSubject*[S](acl: ACL, subject: S, parents: seq[S]) =
 
 proc allow*[R, S, P](acl: ACL, role: R, permission: P, subject: S, includeChildren = true) =
   if not acl.roles.hasKey(role):
-    raise newException(RoleNotFoundException, "role '" & role & "' is not defined yet")
+    raise newException(RoleNotFoundException, "role '" & $role & "' is not defined yet")
 
   if not acl.subjects.hasKey(subject):
-    raise newException(SubjectNotFoundException, "subject '" & subject & "' is not defined yet")
+    raise newException(SubjectNotFoundException, "subject '" & $subject & "' is not defined yet")
 
   var rule: tuple[role: R, perm: P, subject: S]
   if includeChildren:
@@ -59,10 +59,10 @@ proc allow*[R, S, P](acl: ACL, role: R, permission: P, subject: S, includeChildr
 
 proc deny*[R, S, P](acl: ACL, role: R, permission: P, subject: S, includeChildren = true) =
   if not acl.roles.hasKey(role):
-    raise newException(RoleNotFoundException, "role '" & role & "' is not defined yet")
+    raise newException(RoleNotFoundException, "role '" & $role & "' is not defined yet")
 
   if not acl.subjects.hasKey(subject):
-    raise newException(SubjectNotFoundException, "subject '" & subject & "' is not defined yet")
+    raise newException(SubjectNotFoundException, "subject '" & $subject & "' is not defined yet")
 
   var rule: tuple[role: R, perm: P, subject: S]
   if includeChildren:
