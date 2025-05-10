@@ -4,7 +4,7 @@ type
   RoleNotFoundException = object of Exception
   SubjectNotFoundException = object of Exception
 
-  ACL[R, S, P] = ref object of RootObj
+  ACL*[R, S, P] = ref object of RootObj
     children: Table[R, seq[R]]
     roles: Table[R, seq[R]]
     subjects: Table[S, seq[S]]
